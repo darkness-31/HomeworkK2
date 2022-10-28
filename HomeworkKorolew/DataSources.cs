@@ -24,11 +24,20 @@ internal static class Data
 
         return displayName;
     }
+
+    public static string GetDescription(this Enum enumValue)
+    {
+        return enumValue.GetType()
+                   .GetMember(enumValue.ToString())
+                   .First()
+                   .GetCustomAttribute<DescriptionAttribute>()?
+                   .Description ?? string.Empty;
+    }
 }
 
 enum Day
 {
-    [Description("Понидельник")]
+    [Description("Понедельник")]
     Monday,
     [Description("Вторник")]
     Tuesday,
@@ -71,14 +80,44 @@ enum Lesson
     History
 }
 
+class LessonField
+{
+    public LessonField(Lesson name, int group, Teacher teacher)
+    {
+        Name = name.GetDescription();
+        GroupNum = group;
+        Teacher = teacher;
+    }
 
+    public string Name { get; set; }
+    public int GroupNum { get; set; }
+    public Teacher Teacher { get; set; }
 
+}
+class Group
+{
+    public Group(string name, int num, List<DayOfWeek> days)
+    {
+        Name = name;
+        Num = num;
+        Days = days;
+    }
+
+    public string Name { get; set; }
+    public int Num { get; set; }
+    public List<DayOfWeek> Days { get; set; }
+}
 class DayOfWeek
 {
-    public string Name { get; set; }
-    public List<string> Lessons { get; set; }
-}
+    public DayOfWeek(Day name, List<LessonField> lessons)
+    {
+        Name = name.GetDescription();
+        Lessons = lessons;
+    }
 
+    public string Name { get; set; }
+    public List<LessonField> Lessons { get; set; }
+}
 class Teacher
 {
     public Teacher(string name, string surName)
